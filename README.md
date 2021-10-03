@@ -1,9 +1,12 @@
 # syscalls
 
-<br> A simple single header file to use syscalls and regular usermode calls.
+<h1> A simple single header file to use syscalls and regular usermode calls. </h1>
+<br>
+<h2> Example usage: </h2>
 
-<br> Example usage:
-```
+```cpp
+#include "syscalls.hpp"
+
 int main()
 {
     // Using the macro to simplify the call
@@ -24,7 +27,7 @@ int main()
     auto createToolhelp32snapshot = Calls<HANDLE>("CreateToolhelp32Snapshot");
     HANDLE snapshot = createToolhelp32snapshot.Run(TH32CS_SNAPPROCESS, 0); /* Run the function with args */
 
-    std::cout << "[+] " << createToolhelp32snapshot.GetName() << std::endl;         // Name of the function
+    std::cout << "[+] " << createToolhelp32snapshot.GetName() << std::endl; // Name of the function
     std::cout << "[+] Address: " << createToolhelp32snapshot.AddressToString() << std::endl << std::endl << std::endl; // Address (string) of the function
 
     if (snapshot) {
