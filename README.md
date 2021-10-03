@@ -4,6 +4,8 @@
 <br>
 <h2> Example usage: </h2>
 
+![alt text](https://github.com/xo1337/syscalls/blob/main/Image.png)
+
 ```cpp
 #include "syscalls.hpp"
 
