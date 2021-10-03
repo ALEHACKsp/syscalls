@@ -14,7 +14,7 @@ int main()
 
     auto call = Calls<DWORD/* Return type */>("GetCurrentProcessId"/* Function name */);
 
-    DWORD processID = call.Run();
+    DWORD processID = call.Run(); // Run / call the function (no args required) 
 
     if (processID > 0) 
     {
