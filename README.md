@@ -19,7 +19,7 @@ int main()
     if (processID > 0) 
     {
 	std::cout << "[+] ProcessID: " << processID << std::endl;
-	std::cout << "[+] GetCurrentProcesId: " << call.AddressToString() << std::endl;
+	std::cout << "[+] GetCurrentProcessId: " << call.AddressToString() << std::endl;
     }
 
     std::cout << "==============================================" << std::endl;
