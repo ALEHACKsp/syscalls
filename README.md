@@ -2,60 +2,42 @@
 
 <br> A simple single header file to use syscalls and regular usermode calls.
 
+<br> Example usage:
 ```
-#include <Windows.h>
-#include <iostream>
+int main()
+{
+    // Using the macro to simplify the call
+    SYSCALL(NTSTATUS, "NtClose", GetCurrentProcess());
 
-template<class T>
-class Calls  {
-private:
-	void* _Function;
-	const char* _Name;
-public:
-	Calls(const char* _NameT) {
-		if (_NameT) {
-			this->_Name = _NameT;
-			this->_Function = reinterpret_cast<void*>(GetProcAddress(GetModuleHandleA("kernel32.dll"), _Name));
+    auto call = Calls<DWORD/* Return type */>("GetCurrentProcessId"/* Function name */);
 
-			if (!_Function) {
-				throw std::exception("_Function returned NULL");
+    DWORD processID = call.Run();
+
+    if (processID > 0) 
+    {
+	std::cout << "[+] ProcessID: " << processID << std::endl;
+	std::cout << "[+] GetCurrentProcesId: " << call.AddressToString() << std::endl;
+    }
+
+    std::cout << "==============================================" << std::endl;
+
+    auto createToolhelp32snapshot = Calls<HANDLE>("CreateToolhelp32Snapshot");
+    HANDLE snapshot = createToolhelp32snapshot.Run(TH32CS_SNAPPROCESS, 0); /* Run the function with args */
+
+    std::cout << "[+] " << createToolhelp32snapshot.GetName() << std::endl;         // Name of the function
+    std::cout << "[+] Address: " << createToolhelp32snapshot.AddressToString() << std::endl << std::endl << std::endl; // Address (string) of the function
+
+    if (snapshot) {
+	    PROCESSENTRY32 pe32 = { sizeof(PROCESSENTRY32) };
+		if (Process32First(snapshot, &pe32)) {
+			while (Process32Next(snapshot, &pe32)) {
+				std::cout << "[Process]: " << pe32.szExeFile << std::endl;
 			}
 		}
 	}
-
-	Calls(const char* _moduleName, const char* _NameT) {
-		if (_moduleName && _NameT) {
-			this->_Name = _NameT;
-			this->_Function = reinterpret_cast<void*>(GetProcAddress(GetModuleHandleA(_moduleName), _Name));
-
-			if (!_Function) {
-				throw std::exception("_Function returned NULL");
-			}
-		}
-	}
-
-	__forceinline const char* GetName() const {
-		return _Name;
-	}
-
-	__forceinline void* GetAddress() const {
-		return _Function;
-	}
-
-	__forceinline const char* AddressToString() {
-		char buf[64];
-		sprintf_s(buf, "0x%llx", GetAddress());
-		return buf;
-	}
-
-	template<typename ... Args> 
-	__forceinline T Run(Args ... args)
-	{
-		return reinterpret_cast<T(*)(Args ...)>(_Function)(args...);
-	}
-
-};
-
-#define SYSCALL(TYPE, NAME, ...) Calls<TYPE>("ntdll.dll", NAME).Run(__VA_ARGS__)
+	
+    std::cout << "[+] Done!" << std::endl;
+    std::cin.get();
+}
 
 ```
